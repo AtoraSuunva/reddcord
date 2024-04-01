@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  // See https://github.com/prisma/prisma/issues/19729, watch in case this changes
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  guildId     String @id
+  postChannel String
+  logChannel  String
+}
+
+model UsernamePart {
+  word String
+  part String // "adjective", "noun"
+
+  @@id([word, part])
+}
+
+model User {
+  discordId String  @id
+  username  String  @unique
+  blocked   Boolean @default(false)
+
+  posts     Post[]          @relation()
+  votes     PostVote[]      @relation()
+  purchases StorePurchase[] @relation()
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id       Int     @id @default(autoincrement())
+  title    String
+  content  String?
+  image    String?
+  authorId String
+
+  channelId String?
+  messageId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User        @relation(fields: [authorId], references: [discordId])
+  votes  PostVote[]
+  awards PostAward[]
+}
+
+model PostVote {
+  postId Int
+  userId String
+  value  Int
+
+  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [discordId])
+
+  @@unique([postId, userId])
+}
+
+model PostAward {
+  id      Int @id @default(autoincrement())
+  postId  Int
+  awardId Int
+
+  post  Post      @relation(fields: [postId], references: [id])
+  award StoreItem @relation(fields: [awardId], references: [id])
+}
+
+model StoreItem {
+  id          Int    @id @default(autoincrement())
+  emoji       String
+  name        String @unique
+  description String
+  price       Int
+  currency    String // "upvote", "downvote"
+  type        String // "award", "tag"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases  StorePurchase[]
+  postAwards PostAward[]
+}
+
+model StorePurchase {
+  id       Int     @id @default(autoincrement())
+  userId   String
+  itemId   Int
+  price    Int
+  currency String
+  consumed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User      @relation(fields: [userId], references: [discordId])
+  item StoreItem @relation(fields: [itemId], references: [id])
+}

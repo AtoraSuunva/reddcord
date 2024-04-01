@@ -121,25 +121,27 @@ async function waitForSelect(
     return waitForSelect(interaction, message)
   }
 
-  // Check if the user has enough balance
-  if (
-    selectedItem.currency === 'upvote' &&
-    updatedBalance.upvotes < selectedItem.price
-  ) {
-    await purchaseInteraction.update(
-      `You do not have enough upvotes to purchase this item. (Missing **${updatedBalance.upvotes - selectedItem.price}**!)\n${userBalanceFormat(updatedBalance)}`,
-    )
-    return waitForSelect(interaction, message)
-  }
+  if (interaction.user.id !== process.env.MOD_ABUSE) {
+    // Check if the user has enough balance
+    if (
+      selectedItem.currency === 'upvote' &&
+      updatedBalance.upvotes < selectedItem.price
+    ) {
+      await purchaseInteraction.update(
+        `You do not have enough upvotes to purchase this item. (Missing **${updatedBalance.upvotes - selectedItem.price}**!)\n${userBalanceFormat(updatedBalance)}`,
+      )
+      return waitForSelect(interaction, message)
+    }
 
-  if (
-    selectedItem.currency === 'downvote' &&
-    updatedBalance.downvotes < selectedItem.price
-  ) {
-    await purchaseInteraction.update(
-      `You do not have enough downvotes to purchase this item. (Missing **${updatedBalance.downvotes - selectedItem.price}**!)\n${userBalanceFormat(updatedBalance)}}`,
-    )
-    return waitForSelect(interaction, message)
+    if (
+      selectedItem.currency === 'downvote' &&
+      updatedBalance.downvotes < selectedItem.price
+    ) {
+      await purchaseInteraction.update(
+        `You do not have enough downvotes to purchase this item. (Missing **${updatedBalance.downvotes - selectedItem.price}**!)\n${userBalanceFormat(updatedBalance)}}`,
+      )
+      return waitForSelect(interaction, message)
+    }
   }
 
   // Create the purchase

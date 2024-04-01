@@ -30,7 +30,9 @@
   "dependencies": {
     "@prisma/client": "~5.11.0",
     "discord.js": "~14.14.1",
+    "emojify-lyrics": "^1.9.1",
     "env-var": "~7.4.1",
+    "owoify-js": "^2.0.0",
     "pino": "~8.19.0",
     "pino-dev": "^4.0.3",
     "pluralize": "^8.0.0",

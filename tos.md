@@ -2,7 +2,7 @@
 
 Last Updated & Effective as of: April 1, 2024
 
-For Discord Bot: Smol Bot#6975 (205164225625194496), referred to as "The Bot"
+For Discord Bot: Mettaton EX#6447 (353356793268666370), referred to as "The Bot"
 
 ---
 

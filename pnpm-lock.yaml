@@ -38,6 +38,9 @@ dependencies:
   sleetcord-common:
     specifier: ^6.2.0
     version: 6.2.0(prisma@5.11.0)
+  word-thesaurus:
+    specifier: ^1.0.5
+    version: 1.0.5
 
 devDependencies:
   '@types/node':
@@ -2527,6 +2530,11 @@ packages:
     dependencies:
       isexe: 2.0.0
     dev: true
+
+  /word-thesaurus@1.0.5:
+    resolution: {integrity: sha512-yJlFNXe3Ghl1We4UABQ/nxqJxXz2vqZ6sMqp+53uyTBht1kERUgPDwMPlMWjgEmLP/EMIswP52fNtq6NIuaLeg==}
+    engines: {node: '>=16.0'}
+    dev: false
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}

@@ -86,6 +86,13 @@ async function runPost(interaction: ChatInputCommandInteraction) {
     return
   }
 
+  if (reddcordUser.blocked) {
+    await interaction.editReply({
+      content: 'Mods have blocked you from creating new posts!',
+    })
+    return
+  }
+
   const title = interaction.options.getString('title', true)
   const content = interaction.options.getString('content')
   const image = interaction.options.getAttachment('image')
@@ -131,6 +138,7 @@ async function createPost(
   const createdPost = await prisma.post.create({
     data: {
       authorId: interaction.user.id,
+      authorUsername: post.username,
       title: post.title,
       content: post.content ?? null,
       image: post.image?.url ?? null,
@@ -226,7 +234,7 @@ function formatPost(post: PostFullInfo): EmbedBuilder {
     const effect = effectAwards.find((a) => a.name === award.award.name)
 
     if (effect) {
-      postCopy = effect.applyEffect(postCopy)
+      postCopy = effect.applyEffect(postCopy, award.user)
     }
   }
 
@@ -247,7 +255,7 @@ function formatPost(post: PostFullInfo): EmbedBuilder {
   embed.addFields([
     {
       name: 'Votes',
-      value: `\`🢁 ${postCopy.countedVotes.upvotes} • 🢃 ${postCopy.countedVotes.downvotes}\``,
+      value: `\`▲ ${postCopy.countedVotes.upvotes} • ▼ ${postCopy.countedVotes.downvotes}\``,
       inline: true,
     },
   ])
@@ -355,6 +363,17 @@ async function handleVote(
 }
 
 async function handleAward(interaction: ButtonInteraction, postId: number) {
+  // Check if the user is blocked
+  const reddcordUser = await getReddcordUser(interaction.user)
+
+  if (!reddcordUser) {
+    await interaction.reply({
+      content: 'You have been blocked from giving posts awards!.',
+      ephemeral: true,
+    })
+    return
+  }
+
   // Get the awards the user owns
   const purchasedAwards = await getUserOwnedAwards(interaction.user.id)
 
@@ -423,6 +442,7 @@ async function handleAward(interaction: ButtonInteraction, postId: number) {
       data: {
         postId,
         awardId: awardPurchase.item.id,
+        userId: interaction.user.id,
       },
     }),
     prisma.storePurchase.update({
@@ -481,7 +501,6 @@ async function handleDelete(interaction: ButtonInteraction, postId: number) {
   if (!post.channelId || !post.messageId) {
     await interaction.reply({
       content: 'Post deleted successfully, but failed to delete the message!',
-      ephemeral: true,
     })
     return
   }
@@ -492,9 +511,12 @@ async function handleDelete(interaction: ButtonInteraction, postId: number) {
     await postChannel.messages.delete(post.messageId)
   }
 
+  await interaction.message.edit({
+    components: [],
+  })
+
   await interaction.reply({
     content: 'Post deleted successfully!',
-    ephemeral: true,
   })
 }
 
@@ -535,7 +557,6 @@ async function handleBlock(interaction: ButtonInteraction, postId: number) {
   })
 
   await interaction.reply({
-    content: 'User blocked successfully!',
-    ephemeral: true,
+    content: `User blocked successfully by ${formatUser(interaction.user)}!`,
   })
 }

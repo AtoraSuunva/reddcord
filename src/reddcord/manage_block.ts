@@ -28,7 +28,7 @@ export const manage_block = new SleetSlashCommand(
       const user = interaction.options.getUser('user', true)
       const block = interaction.options.getBoolean('block', true)
 
-      await interaction.deferReply({ ephemeral: true })
+      await interaction.deferReply()
 
       const reddcordUser = await prisma.user.findFirst({
         where: {

@@ -26,6 +26,7 @@ export type PostFullInfo = Prisma.PostGetPayload<{
     awards: {
       include: {
         award: true
+        user: true
       }
     }
     votes: true
@@ -64,6 +65,7 @@ export async function getPostFullInfo(
         awards: {
           include: {
             award: true,
+            user: true,
           },
         },
         votes: true,
@@ -84,7 +86,7 @@ export async function getPostFullInfo(
   }
 }
 
-export async function getUserOwnedAwards(userId: string) {
+export async function getUserOwnedAwards(userId: string, take = 25, skip = 0) {
   return prisma.storePurchase.findMany({
     where: {
       userId,
@@ -96,6 +98,12 @@ export async function getUserOwnedAwards(userId: string) {
     include: {
       item: true,
     },
+    orderBy: {
+      id: 'asc',
+    },
+    skip,
+    take,
+    distinct: 'itemId',
   })
 }
 

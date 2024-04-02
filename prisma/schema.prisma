@@ -30,20 +30,22 @@ model User {
   username  String  @unique
   blocked   Boolean @default(false)
 
-  posts     Post[]          @relation()
-  votes     PostVote[]      @relation()
-  purchases StorePurchase[] @relation()
+  posts       Post[]          @relation()
+  votes       PostVote[]      @relation()
+  purchases   StorePurchase[] @relation()
+  givenAwards PostAward[]     @relation()
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Post {
-  id       Int     @id @default(autoincrement())
-  title    String
-  content  String?
-  image    String?
-  authorId String
+  id             Int     @id @default(autoincrement())
+  title          String
+  content        String?
+  image          String?
+  authorUsername String // So later username re-rolls don't change the author
+  authorId       String
 
   channelId String?
   messageId String?
@@ -51,7 +53,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  author User        @relation(fields: [authorId], references: [discordId])
+  author User        @relation(fields: [authorId], references: [discordId], onDelete: Cascade)
   votes  PostVote[]
   awards PostAward[]
 }
@@ -61,19 +63,21 @@ model PostVote {
   userId String
   value  Int
 
-  post Post @relation(fields: [postId], references: [id])
-  user User @relation(fields: [userId], references: [discordId])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [discordId], onDelete: Cascade)
 
   @@unique([postId, userId])
 }
 
 model PostAward {
-  id      Int @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   postId  Int
   awardId Int
+  userId  String
 
-  post  Post      @relation(fields: [postId], references: [id])
-  award StoreItem @relation(fields: [awardId], references: [id])
+  post  Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  award StoreItem @relation(fields: [awardId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [discordId], onDelete: Cascade)
 }
 
 model StoreItem {
@@ -103,6 +107,6 @@ model StorePurchase {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User      @relation(fields: [userId], references: [discordId])
-  item StoreItem @relation(fields: [itemId], references: [id])
+  user User      @relation(fields: [userId], references: [discordId], onDelete: Cascade)
+  item StoreItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }

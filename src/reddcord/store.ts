@@ -48,6 +48,9 @@ async function runStore(interaction: ChatInputCommandInteraction) {
 
   // Get the store items
   const storeItems = await prisma.storeItem.findMany({
+    orderBy: {
+      id: 'asc',
+    },
     take: 25,
   })
 

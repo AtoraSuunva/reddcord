@@ -88,8 +88,10 @@ export const effectAwards: AwardWithEffect[] = [
     applyEffect(postInfo) {
       return {
         ...postInfo,
-        image:
-          'https://cathedral.org/wp-content/uploads/2022/10/HM-The-Queen-26-November-2001-scaled-1-740x494.jpg',
+        addedImages: [
+          ...postInfo.addedImages,
+          'https://cathedral.org/wp-content/uploads/2022/10/HM-The-Queen-26-November-2001-scaled-1-740x494.jpg?var=',
+        ],
       }
     },
   },
@@ -141,8 +143,10 @@ export const effectAwards: AwardWithEffect[] = [
       return {
         ...postInfo,
         title: '[✅ TRUE] ' + postInfo.title,
-        image:
-          'https://media.discordapp.net/stickers/1224516034287898744.jpeg?size=1024',
+        addedImages: [
+          ...postInfo.addedImages,
+          'https://media.discordapp.net/stickers/1224516034287898744.jpeg?size=1024&var=',
+        ],
       }
     },
   },
@@ -186,8 +190,10 @@ export const effectAwards: AwardWithEffect[] = [
     applyEffect(postInfo) {
       return {
         ...postInfo,
-        image:
-          'https://cdn.discordapp.com/attachments/211956704798048256/1224523036040892436/fhya91kpt0r81.jpg?ex=661dccf2&is=660b57f2&hm=f75405f915134f01b46380631a17b2a0b8f7f89fe185a2beb80708dc74e25c8c&',
+        addedImages: [
+          ...postInfo.addedImages,
+          'https://cdn.discordapp.com/attachments/211956704798048256/1224523036040892436/fhya91kpt0r81.jpg?ex=661dccf2&is=660b57f2&hm=f75405f915134f01b46380631a17b2a0b8f7f89fe185a2beb80708dc74e25c8c&var=',
+        ],
       }
     },
   },
@@ -388,8 +394,10 @@ export const effectAwards: AwardWithEffect[] = [
       return {
         ...postInfo,
         title: '[❌ FALSE] ' + postInfo.title,
-        image:
-          'https://media.discordapp.net/stickers/1224515950666059846.jpeg?size=1024',
+        addedImages: [
+          ...postInfo.addedImages,
+          'https://media.discordapp.net/stickers/1224515950666059846.jpeg?size=1024&var=',
+        ],
       }
     },
   },

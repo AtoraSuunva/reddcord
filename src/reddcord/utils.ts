@@ -36,6 +36,7 @@ export type PostFullInfo = Prisma.PostGetPayload<{
     upvotes: number
     downvotes: number
   }
+  addedImages: string[]
 }
 
 export async function getPostFullInfo(
@@ -82,6 +83,7 @@ export async function getPostFullInfo(
         upvotes,
         downvotes,
       },
+      addedImages: [],
     }
   }
 }

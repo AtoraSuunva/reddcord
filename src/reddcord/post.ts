@@ -159,7 +159,7 @@ async function createPost(
   const postChannel = guild.channels.cache.get(guildConfig.postChannel)
   const logChannel = guild.channels.cache.get(guildConfig.logChannel)
 
-  const embed = formatPost(fullPost)
+  const embeds = formatPost(fullPost)
 
   const deleteButton = new ButtonBuilder()
     .setCustomId(`${BUTTON_DELETE}:${createdPost.id}`)
@@ -177,7 +177,7 @@ async function createPost(
   if (logChannel?.isTextBased()) {
     await logChannel.send({
       content: `New post by ${formatUser(interaction.user)}!`,
-      embeds: [embed],
+      embeds,
       components: [moderationRow],
     })
   }
@@ -202,7 +202,7 @@ async function createPost(
 
   if (postChannel?.isTextBased()) {
     const message = await postChannel.send({
-      embeds: [embed],
+      embeds,
       components: [postRow],
     })
 
@@ -226,7 +226,9 @@ async function createPost(
   }
 }
 
-function formatPost(post: PostFullInfo): EmbedBuilder {
+const FAKE_URL = 'https://suplex.me/dummy-link'
+
+function formatPost(post: PostFullInfo): EmbedBuilder[] {
   // For each award, apply the effect
   let postCopy = structuredClone(post)
 
@@ -239,6 +241,7 @@ function formatPost(post: PostFullInfo): EmbedBuilder {
   }
 
   const embed = new EmbedBuilder()
+    .setURL(FAKE_URL)
     .setAuthor({
       name: postCopy.author.username,
     })
@@ -275,7 +278,27 @@ function formatPost(post: PostFullInfo): EmbedBuilder {
     ])
   }
 
-  return embed
+  const embeds = [embed]
+
+  if (postCopy.addedImages.length > 0) {
+    let addedImages = postCopy.image ? 1 : 0
+
+    for (const image of postCopy.addedImages) {
+      if (!embed.data.image) {
+        embed.setImage(`${image}${image.endsWith('=') ? addedImages : ''}`)
+      } else {
+        embeds.push(
+          new EmbedBuilder()
+            .setURL(FAKE_URL)
+            .setImage(`${image}${image.endsWith('=') ? addedImages : ''}`),
+        )
+      }
+
+      if (++addedImages >= 4) break
+    }
+  }
+
+  return embeds
 }
 
 // Buttons!
@@ -355,10 +378,10 @@ async function handleVote(
     return
   }
 
-  const embed = formatPost(fullPost)
+  const embeds = formatPost(fullPost)
 
   await interaction.update({
-    embeds: [embed],
+    embeds,
   })
 }
 
@@ -465,10 +488,10 @@ async function handleAward(interaction: ButtonInteraction, postId: number) {
     return
   }
 
-  const embed = formatPost(fullPost)
+  const embeds = formatPost(fullPost)
 
   await interaction.message.edit({
-    embeds: [embed],
+    embeds,
   })
 
   await component.editReply({

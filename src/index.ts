@@ -4,8 +4,15 @@ import { SleetClient } from 'sleetcord'
 import { initDBLogging } from 'sleetcord-common'
 import { modules } from './modules.js'
 import { prisma } from './util/db.js'
+import { seedDB } from './util/seedDB.js'
 
 async function main() {
+  const parts = await prisma.usernamePart.findFirst()
+
+  if (!parts) {
+    await seedDB()
+  }
+
   const TOKEN = env.get('TOKEN').required().asString()
   const APPLICATION_ID = env.get('APPLICATION_ID').required().asString()
 

@@ -12,7 +12,7 @@
     "lint:fix": "eslint src/ --fix && prettier --write src/ && prisma format && tsc --noEmit"
   },
   "prisma": {
-    "seed": "node --loader ts-node/esm ./src/util/seed.ts"
+    "seed": "node --loader ts-node/esm ./src/util/runSeed.ts"
   },
   "repository": {
     "type": "git",

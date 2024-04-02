@@ -337,6 +337,17 @@ async function handleVote(
   postId: number,
   vote: number,
 ) {
+  const reddcordUser = await getReddcordUser(interaction.user)
+
+  if (!reddcordUser) {
+    await interaction.reply({
+      content:
+        'You must register an account before you can vote on posts! Use `/register` to register an account.',
+      ephemeral: true,
+    })
+    return
+  }
+
   const post = await prisma.post.findUnique({
     where: {
       id: postId,
@@ -390,6 +401,15 @@ async function handleAward(interaction: ButtonInteraction, postId: number) {
   const reddcordUser = await getReddcordUser(interaction.user)
 
   if (!reddcordUser) {
+    await interaction.reply({
+      content:
+        'You must register an account before you can give posts awards! Use `/register` to register an account.',
+      ephemeral: true,
+    })
+    return
+  }
+
+  if (reddcordUser.blocked) {
     await interaction.reply({
       content: 'You have been blocked from giving posts awards!.',
       ephemeral: true,
